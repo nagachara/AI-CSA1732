@@ -1,0 +1,55 @@
+import networkx as nx
+
+# Define the map as a graph
+def create_map():
+    G = nx.Graph()
+    regions = ["WA", "NT", "SA", "Q", "NSW", "V", "T"]
+    edges = [
+        ("WA", "NT"), ("WA", "SA"), ("NT", "SA"), ("NT", "Q"),
+        ("SA", "Q"), ("SA", "NSW"), ("SA", "V"), ("Q", "NSW"),
+        ("NSW", "V")
+    ]
+    G.add_nodes_from(regions)
+    G.add_edges_from(edges)
+    return G
+
+# Check if the current color assignment is valid
+def is_valid(G, node, color, color_assignment):
+    for neighbor in G.neighbors(node):
+        if color_assignment.get(neighbor) == color:
+            return False
+    return True
+
+# The main CSP solver using backtracking
+def map_coloring_csp(G, colors, color_assignment, node_index=0):
+    nodes = list(G.nodes)
+    if node_index == len(nodes):
+        return color_assignment
+    
+    node = nodes[node_index]
+    for color in colors:
+        if is_valid(G, node, color, color_assignment):
+            color_assignment[node] = color
+            result = map_coloring_csp(G, colors, color_assignment, node_index + 1)
+            if result:
+                return result
+            color_assignment[node] = None
+    
+    return None
+
+# Display the result
+def print_result(color_assignment):
+    if color_assignment:
+        for region, color in color_assignment.items():
+            print(f"Region {region} is colored {color}")
+    else:
+        print("No valid coloring found.")
+
+# Main function
+if __name__ == "__main__":
+    colors = ["Red", "Green", "Blue"]  # List of colors
+    G = create_map()
+    color_assignment = {node: None for node in G.nodes}
+    
+    result = map_coloring_csp(G, colors, color_assignment)
+    print_result(result)
