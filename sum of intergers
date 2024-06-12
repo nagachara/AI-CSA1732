@@ -1,0 +1,12 @@
+% Base case: Sum of integers from 1 to 1 is 1.
+sum_to_n(1, 1).
+
+% Recursive case: Sum of integers from 1 to N is Sum1 plus N, where Sum1 is the sum from 1 to N-1.
+sum_to_n(N, Sum) :-
+    N > 1,
+    N1 is N - 1,
+    sum_to_n(N1, Sum1),
+    Sum is Sum1 + N.
+
+% Example query: sum_to_n(5, Sum).
+% This will unify Sum with the result of 1+2+3+4+5, which is 15.
