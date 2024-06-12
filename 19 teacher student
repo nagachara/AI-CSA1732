@@ -1,0 +1,49 @@
+% Define student, teacher, subject, and course code relations
+
+student(john).
+student(amy).
+student(michael).
+student(lisa).
+
+teacher(mr_smith).
+teacher(ms_jones).
+teacher(dr_brown).
+
+subject(math).
+subject(english).
+subject(science).
+
+course_code(math, 101).
+course_code(english, 102).
+course_code(science, 103).
+
+% Define which teacher teaches which subject
+
+teaches_subject(mr_smith, math).
+teaches_subject(ms_jones, english).
+teaches_subject(dr_brown, science).
+
+% Define which student takes which subject
+
+takes_subject(john, math).
+takes_subject(john, english).
+takes_subject(amy, english).
+takes_subject(amy, science).
+takes_subject(michael, math).
+takes_subject(michael, science).
+takes_subject(lisa, math).
+takes_subject(lisa, english).
+
+% Define which course code corresponds to which subject
+
+course_subject_code(CourseCode, Subject) :-
+    course_code(Subject, CourseCode).
+
+% Define which teacher teaches a student in a particular subject
+
+teacher_of_student_in_subject(Student, Teacher, Subject) :-
+    takes_subject(Student, Subject),
+    teaches_subject(Teacher, Subject).
+
+% Example query: Who teaches John in Math?
+% Query: teacher_of_student_in_subject(john, Teacher, math).
