@@ -1,0 +1,22 @@
+% Facts representing individuals with their date of birth
+dob(john, date(1990, 5, 15)).
+dob(alice, date(1985, 10, 25)).
+dob(bob, date(1993, 3, 8)).
+
+% Query to find the date of birth of a person
+date_of_birth(Person, DateOfBirth) :-
+    dob(Person, DateOfBirth).
+
+% Query to find the age of a person based on their date of birth
+age(Person, Age) :-
+    dob(Person, date(Year, Month, Day)),
+    get_date(Y, M, D),
+    Age is Y - Year - (M < Month; (M == Month, D < Day)).
+
+% Helper predicate to get the current date
+get_date(Year, Month, Day) :-
+    get_time(Stamp),
+    stamp_date_time(Stamp, DateTime, local),
+    date_time_value(year, DateTime, Year),
+    date_time_value(month, DateTime, Month),
+    date_time_value(day, DateTime, Day).
