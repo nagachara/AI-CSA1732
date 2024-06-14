@@ -1,0 +1,29 @@
+% Facts
+fact(bird(tweety)).
+fact(cat(kitty)).
+fact(fish(goldie)).
+fact(has_wings(tweety)).
+fact(has_fur(kitty)).
+fact(has_scales(goldie)).
+
+% Rules
+animal(X) :- bird(X).
+animal(X) :- cat(X).
+animal(X) :- fish(X).
+
+can_fly(X) :- bird(X), has_wings(X).
+
+mammal(X) :- cat(X), has_fur(X).
+
+swims(X) :- fish(X), has_scales(X).
+
+% To check if a given goal is true
+prove(Goal) :-
+    (fact(Goal) -> true ; (Goal :- Body), prove_all(Body)).
+
+prove_all(true).
+prove_all((Goal, Goals)) :-
+    prove(Goal),
+    prove_all(Goals).
+prove_all(Goal) :-
+    prove(Goal)
