@@ -1,0 +1,72 @@
+initial_state(state(at_door, on_floor, at_window, hanging)).
+
+% Goal state: banana is grabbed
+goal_state(state(_, _, _, grabbed)).
+
+% Move action: Monkey moves from one place to another
+move(state(From, on_floor, Box, Banana), state(To, on_floor, Box, Banana)) :-
+    member(From, [at_door, at_window, at_middle]),
+    member(To, [at_door, at_window, at_middle]),
+    From \= To.
+
+% Push action: Monkey pushes the box from one place to another
+push(state(From, on_floor, From, Banana), state(To, on_floor, To, Banana)) :-
+    member(From, [at_door, at_window, at_middle]),
+    member(To, [at_door, at_window, at_middle]),
+    From \= To.
+
+% Climb action: Monkey climbs onto the box
+climb(state(Pos, on_floor, Pos, Banana), state(Pos, on_box, Pos, Banana)).
+
+% Climb down action: Monkey climbs down from the box
+climb_down(state(Pos, on_box, Pos, Banana), state(Pos, on_floor, Pos, Banana)).
+
+% Grab action: Monkey grabs the banana
+grab(state(at_middle, on_box, at_middle, hanging), state(at_middle, on_box, at_middle, grabbed)).
+
+% Plan: find a sequence of actions to achieve the goal state
+plan(State, _, []) :-
+    goal_state(State).
+
+plan(State, Visited, [Action | Actions]) :-
+    call(Action, State, NewState),
+    \+ member(NewState, Visited),
+    plan(NewState, [NewState | Visited], Actions).
+
+% Start the planning process
+solve :-
+    initial_state(InitialState),
+    plan(InitialState, [InitialState], Actions),
+    write('Solution: '), nl,
+    write(Actions), nl.
+
+% Actions predicates
+move_action(From, To, state(From, on_floor, Box, Banana), state(To, on_floor, Box, Banana)).
+push_action(From, To, state(From, on_floor, From, Banana), state(To, on_floor, To, Banana)).
+climb_action(state(Pos, on_floor, Pos, Banana), state(Pos, on_box, Pos, Banana)).
+climb_down_action(state(Pos, on_box, Pos, Banana), state(Pos, on_floor, Pos, Banana)).
+grab_action(state(at_middle, on_box, at_middle, hanging), state(at_middle, on_box, at_middle, grabbed)).
+
+% Mapping actions to their corresponding predicates
+action(move(From, To), move_action(From, To)).
+action(push(From, To), push_action(From, To)).
+action(climb, climb_action).
+action(climb_down, climb_down_action).
+action(grab, grab_action).
+
+% Find a plan given the initial state
+plan(State, _, []) :-
+    goal_state(State).
+
+plan(State, Visited, [Action | Actions]) :-
+    action(Action, Predicate),
+    call(Predicate, State, NewState),
+    \+ member(NewState, Visited),
+    plan(NewState, [NewState | Visited], Actions).
+
+% Start the planning process and print the solution
+solve :-
+    initial_state(InitialState),
+    plan(InitialState, [InitialState], Actions),
+    write('Solution: '), nl,
+    write(Actions), nl.
