@@ -1,0 +1,46 @@
+% Initial facts
+fact(bird(tweety)).
+fact(cat(kitty)).
+fact(fish(goldie)).
+fact(has_wings(tweety)).
+fact(has_fur(kitty)).
+fact(has_scales(goldie)).
+
+% Rules
+rule(animal(X), bird(X)) :- fact(bird(X)).
+rule(animal(X), cat(X)) :- fact(cat(X)).
+rule(animal(X), fish(X)) :- fact(fish(X)).
+rule(can_fly(X), has_wings(X)) :- fact(has_wings(X)).
+rule(mammal(X), has_fur(X)) :- fact(has_fur(X)).
+rule(swims(X), has_scales(X)) :- fact(has_scales(X)).
+
+% Forward chaining procedure
+forward_chain :-
+    findall((Head :- Body), rule(Head, Body), Rules),
+    apply_rules(Rules).
+
+apply_rules([]).
+apply_rules([Rule|Rules]) :-
+    Rule = (Head :- Body),
+    (   fact(Head) % If the fact is already known, skip it
+    ->  apply_rules(Rules)
+    ;   call(Body) % If the body of the rule is true
+    ->  assertz(fact(Head)), % Assert the new fact
+        apply_rules(Rules), % Continue with remaining rules
+        forward_chain % Restart forward chaining to apply rules with new facts
+    ;   apply_rules(Rules) % Continue with remaining rules
+    ).
+
+% To check derived facts
+query :-
+    write('Derived facts:'), nl,
+    findall(Fact, fact(Fact), Facts),
+    print_facts(Facts).
+
+print_facts([]).
+print_facts([Fact|Facts]) :-
+    write(Fact), nl,
+    print_facts(Facts).
+
+% Example usage:
+% ?- forward_chain, query.
