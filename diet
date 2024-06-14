@@ -1,0 +1,44 @@
+diet_recommendation(diabetes, 'High-fiber foods, low-sugar fruits, whole grains, lean proteins, non-starchy vegetables').
+diet_recommendation(hypertension, 'Low-sodium foods, fruits, vegetables, whole grains, low-fat dairy products, lean proteins').
+diet_recommendation(celiac_disease, 'Gluten-free foods, fruits, vegetables, meat, fish, rice, and potatoes').
+diet_recommendation(coronary_heart_disease, 'Fruits, vegetables, whole grains, lean protein, low-fat dairy, healthy fats').
+diet_recommendation(kidney_disease, 'Low-sodium, low-potassium, low-phosphorus foods, lean proteins, fresh fruits, and vegetables').
+
+symptom(diabetes, 'Frequent urination').
+symptom(diabetes, 'Increased thirst').
+symptom(diabetes, 'Unexplained weight loss').
+symptom(hypertension, 'High blood pressure').
+symptom(hypertension, 'Headaches').
+symptom(hypertension, 'Dizziness').
+symptom(celiac_disease, 'Abdominal pain').
+symptom(celiac_disease, 'Diarrhea').
+symptom(celiac_disease, 'Bloating').
+symptom(coronary_heart_disease, 'Chest pain').
+symptom(coronary_heart_disease, 'Shortness of breath').
+symptom(coronary_heart_disease, 'Fatigue').
+symptom(kidney_disease, 'Swelling in ankles').
+symptom(kidney_disease, 'Fatigue').
+symptom(kidney_disease, 'Difficulty urinating').
+
+% Rule to suggest diet based on the disease
+
+suggest_diet(Disease, Recommendation) :-
+    diet_recommendation(Disease, Recommendation).
+
+% Rule to determine disease based on symptoms
+
+diagnose(Symptom, Disease) :-
+    symptom(Disease, Symptom).
+
+% Interactive diagnosis and diet suggestion
+
+start :-
+    write('Welcome to the Diet Suggestion System based on Diseases!'), nl,
+    write('Please enter your symptom (in quotes, end with a period): '), nl,
+    read(Symptom),
+    ( diagnose(Symptom, Disease) ->
+        write('You may have: '), write(Disease), nl,
+        suggest_diet(Disease, Recommendation),
+        write('Diet recommendation: '), write(Recommendation), nl
+    ; write('Sorry, no matching disease found for the given symptom.'), nl
+    ).
